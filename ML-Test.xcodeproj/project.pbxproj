@@ -10,8 +10,10 @@
 		477B723020CC66E100A318EA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477B722F20CC66E100A318EA /* AppDelegate.swift */; };
 		477B723220CC66E100A318EA /* PrincipalDisplayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477B723120CC66E100A318EA /* PrincipalDisplayViewController.swift */; };
 		477B723720CC66E300A318EA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 477B723620CC66E300A318EA /* Assets.xcassets */; };
-		477B723A20CC66E300A318EA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 477B723820CC66E300A318EA /* LaunchScreen.storyboard */; };
 		477B724820CC697700A318EA /* PrincipalDisplayPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477B724720CC697700A318EA /* PrincipalDisplayPresenter.swift */; };
+		477B724A20CC89E300A318EA /* Inceptionv3.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 477B724920CC89E200A318EA /* Inceptionv3.mlmodel */; };
+		477B725020CCA0CC00A318EA /* CameraDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477B724F20CCA0CC00A318EA /* CameraDisplayView.swift */; };
+		477B725220CCAB2B00A318EA /* IdentifierTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477B725120CCAB2B00A318EA /* IdentifierTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -19,9 +21,11 @@
 		477B722F20CC66E100A318EA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		477B723120CC66E100A318EA /* PrincipalDisplayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrincipalDisplayViewController.swift; sourceTree = "<group>"; };
 		477B723620CC66E300A318EA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		477B723920CC66E300A318EA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		477B723B20CC66E300A318EA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		477B724720CC697700A318EA /* PrincipalDisplayPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrincipalDisplayPresenter.swift; sourceTree = "<group>"; };
+		477B724920CC89E200A318EA /* Inceptionv3.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = Inceptionv3.mlmodel; sourceTree = "<group>"; };
+		477B724F20CCA0CC00A318EA /* CameraDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraDisplayView.swift; sourceTree = "<group>"; };
+		477B725120CCAB2B00A318EA /* IdentifierTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IdentifierTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,8 +61,8 @@
 				477B722F20CC66E100A318EA /* AppDelegate.swift */,
 				477B724120CC692B00A318EA /* App */,
 				477B723620CC66E300A318EA /* Assets.xcassets */,
-				477B723820CC66E300A318EA /* LaunchScreen.storyboard */,
 				477B723B20CC66E300A318EA /* Info.plist */,
+				477B724920CC89E200A318EA /* Inceptionv3.mlmodel */,
 			);
 			path = "ML-Test";
 			sourceTree = "<group>";
@@ -92,6 +96,8 @@
 			isa = PBXGroup;
 			children = (
 				477B723120CC66E100A318EA /* PrincipalDisplayViewController.swift */,
+				477B725120CCAB2B00A318EA /* IdentifierTableViewCell.swift */,
+				477B724F20CCA0CC00A318EA /* CameraDisplayView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -154,7 +160,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				477B723A20CC66E300A318EA /* LaunchScreen.storyboard in Resources */,
 				477B723720CC66E300A318EA /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -167,23 +172,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				477B723220CC66E100A318EA /* PrincipalDisplayViewController.swift in Sources */,
+				477B724A20CC89E300A318EA /* Inceptionv3.mlmodel in Sources */,
 				477B723020CC66E100A318EA /* AppDelegate.swift in Sources */,
+				477B725020CCA0CC00A318EA /* CameraDisplayView.swift in Sources */,
+				477B725220CCAB2B00A318EA /* IdentifierTableViewCell.swift in Sources */,
 				477B724820CC697700A318EA /* PrincipalDisplayPresenter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXVariantGroup section */
-		477B723820CC66E300A318EA /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				477B723920CC66E300A318EA /* Base */,
-			);
-			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		477B723C20CC66E300A318EA /* Debug */ = {
@@ -306,7 +303,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 3L34B92962;
 				INFOPLIST_FILE = "ML-Test/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -314,6 +313,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "YilunLi.ML-Test";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -323,7 +324,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 3L34B92962;
 				INFOPLIST_FILE = "ML-Test/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -331,6 +334,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "YilunLi.ML-Test";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

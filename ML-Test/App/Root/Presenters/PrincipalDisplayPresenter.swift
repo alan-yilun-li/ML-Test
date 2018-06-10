@@ -1,6 +1,6 @@
 import UIKit
-import AVKit
 import Vision
+import AVFoundation
 
 /// MLCameraViewController sets up AVCaptureSession & presents AVCaptureVideoPreviewLayer.
 /// Uses AVCaptureOutput's pixel buffer to create classification request to Inceptionv3
@@ -10,6 +10,21 @@ class PrincipalDisplayPresenter: NSObject {
 
     weak var viewController: PrincipalDisplayViewController!
     private var session: AVCaptureSession?
+    var observations = [VNClassificationObservation]() {
+        didSet { viewController.reloadData() }
+    }
+
+    lazy var classificationRequest: VNCoreMLRequest = {
+        // Load the ML model through its generated class and create a Vision request for it.
+        do {
+            let model = try VNCoreMLModel(for: Inceptionv3().model)
+            let request = VNCoreMLRequest(model: model, completionHandler: self.handleClassification)
+            request.imageCropAndScaleOption = VNImageCropAndScaleOption.centerCrop
+            return request
+        } catch {
+            fatalError("MLModel Load Failed: \(error)")
+        }
+    }()
 }
 
 // MARK: - View Lifecycle Methods
@@ -39,7 +54,7 @@ extension PrincipalDisplayPresenter {
 }
 
 // MARK: - AVSessionControl Methods
-fileprivate extension PrincipalDisplayPresenter {
+private extension PrincipalDisplayPresenter {
 
     func startSession() {
         session?.startRunning()
@@ -61,7 +76,11 @@ extension PrincipalDisplayPresenter {
     @objc private func deviceOrientationDidChange(_ notification: Notification) {
         session?.outputs.forEach {
             $0.connections.forEach {
-                $0.videoOrientation = UIDevice.current.orientation
+                if let orientation = AVCaptureVideoOrientation(
+                    rawValue: UIDevice.current.orientation.rawValue
+                ) {
+                    $0.videoOrientation = orientation
+                }
             }
         }
     }
@@ -84,10 +103,11 @@ private extension PrincipalDisplayPresenter {
         output.setSampleBufferDelegate(self, queue: DispatchQueue.global(qos: .userInteractive))
 
         let previewLayer = AVCaptureVideoPreviewLayer(session: session)
-        viewController.view.layer.addSublayer(previewLayer)
-
+        DispatchQueue.main.async { [weak self] in
+            self?.viewController.cameraDisplayView.addPreviewLayer(previewLayer)
+        }
         self.session = session
-        session.startRunning()
+        startSession()
     }
 }
 
@@ -96,16 +116,15 @@ private extension PrincipalDisplayPresenter {
 extension PrincipalDisplayPresenter: AVCaptureVideoDataOutputSampleBufferDelegate {
 
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-        // Note: Pixel buffer is already correctly rotated based on device rotation
-        // See: deviceOrientationDidChange(_:) comment
-        guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
-            return
-        }
+        guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
         var requestOptions: [VNImageOption: Any] = [:]
-        if let cameraIntrinsicData = CMGetAttachment(sampleBuffer, kCMSampleBufferAttachmentKey_CameraIntrinsicMatrix, nil) {
+        if let cameraIntrinsicData = CMGetAttachment(
+            sampleBuffer,
+            kCMSampleBufferAttachmentKey_CameraIntrinsicMatrix,
+            nil
+        ) {
             requestOptions = [.cameraIntrinsics: cameraIntrinsicData]
         }
-        // Run the Core ML classifier - results in handleClassification method
         let handler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, options: requestOptions)
         do {
             try handler.perform([classificationRequest])
@@ -115,4 +134,37 @@ extension PrincipalDisplayPresenter: AVCaptureVideoDataOutputSampleBufferDelegat
     }
 }
 
+// MARK: - ML Classification
 
+extension PrincipalDisplayPresenter {
+
+    func handleClassification(request: VNRequest, error: Error?) {
+        let observations = request.results as! [VNClassificationObservation]
+        let acceptedObservations = observations[0...10].filter({ $0.confidence > 0.1 })
+        DispatchQueue.main.async { [weak self] in
+            self?.observations = acceptedObservations
+        }
+    }
+}
+
+// MARK: - UITableViewDataSource
+extension PrincipalDisplayPresenter: UITableViewDataSource {
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return observations.count
+    }
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(
+            withIdentifier: IdentifierTableViewCell.reuseID,
+            for: indexPath
+        ) as! IdentifierTableViewCell
+
+        cell.identifierText = observations[indexPath.row].identifier
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .percent
+        let number = NSNumber(value: observations[indexPath.row].confidence)
+        cell.confidence = formatter.string(from: number) ?? "-1" 
+
+        return cell
+    }
+}
