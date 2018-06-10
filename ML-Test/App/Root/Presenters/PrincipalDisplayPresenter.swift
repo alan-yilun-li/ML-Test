@@ -2,10 +2,6 @@ import UIKit
 import Vision
 import AVFoundation
 
-/// MLCameraViewController sets up AVCaptureSession & presents AVCaptureVideoPreviewLayer.
-/// Uses AVCaptureOutput's pixel buffer to create classification request to Inceptionv3
-/// model. Device rotation handled by setting orientation on AVCaptureConnection (not ideal).
-/// See: deviceOrientationDidChange(_:) comment.
 class PrincipalDisplayPresenter: NSObject {
 
     weak var viewController: PrincipalDisplayViewController!
@@ -15,11 +11,11 @@ class PrincipalDisplayPresenter: NSObject {
     }
 
     lazy var classificationRequest: VNCoreMLRequest = {
-        // Load the ML model through its generated class and create a Vision request for it.
         do {
             let model = try VNCoreMLModel(for: Inceptionv3().model)
             let request = VNCoreMLRequest(model: model, completionHandler: self.handleClassification)
             request.imageCropAndScaleOption = VNImageCropAndScaleOption.centerCrop
+            DispatchQueue.main.async { self.viewController.hideLoadingSpinner(permanently: true) }
             return request
         } catch {
             fatalError("MLModel Load Failed: \(error)")
@@ -61,6 +57,7 @@ private extension PrincipalDisplayPresenter {
         /* AVCaptureConnection needs manual adjustment so CVImageBuffer pixels
          are rotated correctly in captureOutput(_:didOutput:from:) */
         UIDevice.current.beginGeneratingDeviceOrientationNotifications()
+        DispatchQueue.main.async { self.viewController.showLoadingSpinner() }
     }
 
     func stopSession() {

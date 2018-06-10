@@ -6,6 +6,7 @@ class PrincipalDisplayViewController: UIViewController {
 
     private var tableView = UITableView(frame: .zero)
     var cameraDisplayView = CameraDisplayView(frame: .zero)
+    var activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
 
     init(presenter: PrincipalDisplayPresenter) {
         self.presenter = presenter
@@ -21,7 +22,6 @@ class PrincipalDisplayViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        presenter.viewDidLoad()
 
         tableView.register(
             IdentifierTableViewCell.self,
@@ -29,6 +29,7 @@ class PrincipalDisplayViewController: UIViewController {
         )
         setupViews()
         setupConstraints()
+        presenter.viewDidLoad()
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -37,6 +38,24 @@ class PrincipalDisplayViewController: UIViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         presenter.viewDidDisappear()
+    }
+}
+
+// MARK: - Actions
+extension PrincipalDisplayViewController {
+
+    func showLoadingSpinner() {
+        activityIndicator.isHidden = false
+        activityIndicator.startAnimating()
+    }
+
+    func hideLoadingSpinner(permanently: Bool) {
+        if permanently {
+            activityIndicator.removeFromSuperview()
+        } else {
+            activityIndicator.isHidden = true
+            activityIndicator.stopAnimating()
+        }
     }
 
     func reloadData() {
@@ -62,8 +81,11 @@ private extension PrincipalDisplayViewController {
         cameraDisplayView.translatesAutoresizingMaskIntoConstraints = false
         tableView.translatesAutoresizingMaskIntoConstraints = false
 
+        activityIndicator.isHidden = true
+        
         view.addSubview(cameraDisplayView)
         view.addSubview(tableView)
+        view.addSubview(activityIndicator)
     }
 
     func setupConstraints() {
@@ -79,7 +101,12 @@ private extension PrincipalDisplayViewController {
             tableView.trailingAnchor.constraint(equalTo: view.readableContentGuide.trailingAnchor),
             tableView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 1/4)
         ]
+        let activityConstraints = [
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ]
         NSLayoutConstraint.activate(cameraDisplayConstraints)
         NSLayoutConstraint.activate(tableViewConstraints)
+        NSLayoutConstraint.activate(activityConstraints)
     }
 }
